@@ -83,30 +83,49 @@ if (!window.hasRun) {
 
   function getVideoInfo() {
     const videoElement = document.querySelector('video');
-    const titleElement = document.querySelector('.video-title, .title-text, .watch-title, .title');
-    const episodeElement = document.querySelector('.episode-title, .playable-title');
-    const seasonElement = document.querySelector('.season-title');
-    
-    // Try to find title in Netflix's specific data attributes
+    let title = 'Unknown';
+    let type = 'Unknown';
+    let episode = null;
+    let season = null;
+
+    // Netflix-specific selectors
     const netflixDataTitle = document.querySelector('[data-uia="video-title"], [data-uia="player-title"]');
-    
-    console.log('Netflix data title element:', netflixDataTitle);
-    console.log('Title element:', titleElement);
-    console.log('Episode element:', episodeElement);
-    console.log('Season element:', seasonElement);
-    
+    const netflixEpisodeTitle = document.querySelector('[data-uia="episode-title"]');
+    const netflixSeasonTitle = document.querySelector('.season-title');
+
+    // Max-specific selectors
+    const maxTitleElement = document.querySelector('.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1777fci h1');
+    const maxEpisodeElement = document.querySelector('.css-901oao.css-cens5h.r-1kihuf0.r-1b43r93.r-b88u0q.r-1cwl3u0.r-q4m81j');
+
+    if (netflixDataTitle) {
+      // Netflix
+      title = netflixDataTitle.textContent.trim();
+      type = netflixSeasonTitle ? 'TV Show' : 'Movie';
+      episode = netflixEpisodeTitle ? netflixEpisodeTitle.textContent.trim() : null;
+      season = netflixSeasonTitle ? netflixSeasonTitle.textContent.trim() : null;
+    } else if (maxTitleElement) {
+      // Max
+      title = maxTitleElement.textContent.trim();
+      type = maxEpisodeElement ? 'TV Show' : 'Movie';
+      if (maxEpisodeElement) {
+        const episodeInfo = maxEpisodeElement.textContent.trim().split(' • ');
+        if (episodeInfo.length > 1) {
+          season = episodeInfo[0];
+          episode = episodeInfo[1];
+        }
+      }
+    }
+
     const info = {
-      title: netflixDataTitle ? netflixDataTitle.textContent.trim() : 
-             (titleElement ? titleElement.textContent.trim() : 'Unknown'),
-      type: seasonElement || episodeElement ? 'TV Show' : 'Movie',
-      episode: episodeElement ? episodeElement.textContent.trim() : null,
-      season: seasonElement ? seasonElement.textContent.trim() : null,
+      title,
+      type,
+      episode,
+      season,
       currentTime: videoElement ? videoElement.currentTime : 0,
       duration: videoElement ? videoElement.duration : 0
     };
-    
+
     console.log('Video info:', info);
-    
     return info;
   }
 
