@@ -19,7 +19,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: request.message }),
+      body: JSON.stringify({ 
+        message: request.message,
+        videoInfo: request.videoInfo
+      }),
     })
     .then(response => response.json())
     .then(data => {
@@ -31,7 +34,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     });
     return true;  // Indicates that the response will be sent asynchronously
   } else if (request.action === "videoEvent") {
-    console.log("Video event:", request.event, "at time:", request.currentTime);
-    // Here you could process video events, update context, etc.
+    console.log("Video event received:", request.event, "at time:", request.currentTime);
+    // Process the video event here
+    sendResponse({ status: "Video event processed" });
   }
 });
