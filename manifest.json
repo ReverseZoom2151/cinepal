@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Video AI Assistant",
+  "version": "1.0",
+  "description": "AI assistant providing real-time contextual information for video platforms",
+  "permissions": ["activeTab", "storage", "tabs", "scripting"],
+  "host_permissions": [
+    "*://*.netflix.com/*",
+    "*://*.max.com/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "chrome-extension/popup/popup.html",
+    "default_icon": {
+      "16": "chrome-extension/images/icon16.jpg",
+      "48": "chrome-extension/images/icon48.jpg",
+      "128": "chrome-extension/images/icon128.jpg"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*", "*://*.max.com/*"],
+      "js": ["chrome-extension/content/content.js"],
+      "css": ["chrome-extension/content/content.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "chrome-extension/background/background.js"
+  }
+}
